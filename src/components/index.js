@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
-import ToDoList from "./ToDo";
-import { Add } from "./ToDoList";
+import { useDispatch, useSelector } from "react-redux";
+import { addToDo } from "../redux/actions";
+import { todoListSelector } from "../redux/selector";
 
 export default function Home() {
   const [ToDoName, setToDoName] = useState("");
@@ -14,10 +15,12 @@ export default function Home() {
     name: ToDoName,
     priority: "High",
   };
+  const usedispatch = useDispatch();
   const Submit = () => {
-    Add({ ToDo });
+    usedispatch(addToDo(ToDo));
     setToDoName("");
   };
+  const todoListnew = useSelector(todoListSelector);
   const classname = {
     body: {
       fontFamily: "Serif",
@@ -63,7 +66,16 @@ export default function Home() {
             </button>
           </div>
 
-          <ToDoList />
+          <div>
+            Danh Sách <hr />
+            {todoListnew.map((ToDo) => {
+              return (
+                <p className="text-black" key={ToDo.id}>
+                  Việc làm: {ToDo.name} | Mức độ: {ToDo.priority}{" "}
+                </p>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
