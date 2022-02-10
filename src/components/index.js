@@ -1,24 +1,33 @@
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
-import { addToDo } from "../redux/actions";
+import { addToDo, deleteToDo } from "../redux/actions";
 import { todoListSelector } from "../redux/selector";
 
 export default function Home() {
   const [ToDoName, setToDoName] = useState("");
+  const [priority, setPriority] = useState("");
 
   const handleInputChange = (e) => {
     setToDoName(e.target.value);
   };
+  const handlePriorityChange = (e) => {
+    setPriority(e.target.value);
+  };
+
   const ToDo = {
     id: uuid(),
     name: ToDoName,
-    priority: "High",
+    priority: priority,
   };
   const usedispatch = useDispatch();
   const Submit = () => {
     usedispatch(addToDo(ToDo));
     setToDoName("");
+    setPriority("Medium");
+  };
+  const deleteItem = (index) => {
+    usedispatch(deleteToDo(index));
   };
   const todoListnew = useSelector(todoListSelector);
   const classname = {
@@ -37,6 +46,13 @@ export default function Home() {
       fontWeigh: "Border",
       fontSize: "40px",
     },
+    priority: {
+      float: "Right",
+    },
+    button: {
+      float: "Right",
+      marginLeft: "10px",
+    },
   };
   return (
     <div className="container" style={classname.body}>
@@ -47,7 +63,7 @@ export default function Home() {
           </h5>
           <div className="mb-3 row">
             <label className="col-sm-3 col-form-label">Nhập việc cần làm</label>
-            <div className="col-sm-9">
+            <div className="col-sm-5">
               <input
                 type="text"
                 className="form-control"
@@ -56,8 +72,20 @@ export default function Home() {
                 value={ToDoName}
               />
             </div>
+            <div className="col-sm-4">
+              <select
+                className="form-select"
+                value={priority}
+                onChange={handlePriorityChange}
+              >
+                <option defaultValue="Medium">Lựa chọn mức độ</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+                <option value="High">High</option>
+              </select>
+            </div>
             <button
-              className="btn btn-primary"
+              className="btn btn-primary col-sm-12"
               onClick={() => {
                 Submit();
               }}
@@ -68,10 +96,21 @@ export default function Home() {
 
           <div>
             Danh Sách <hr />
-            {todoListnew.map((ToDo) => {
+            {todoListnew.map((ToDo, index) => {
               return (
                 <p className="text-black" key={ToDo.id}>
-                  Việc làm: {ToDo.name} | Mức độ: {ToDo.priority}{" "}
+                  {ToDo.name}
+
+                  <button
+                    className="btn btn-warning"
+                    style={classname.button}
+                    onClick={() => {
+                      deleteItem(index);
+                    }}
+                  >
+                    Xoá
+                  </button>
+                  {<span style={classname.priority}>{ToDo.priority}</span>}
                 </p>
               );
             })}

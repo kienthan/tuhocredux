@@ -13,7 +13,13 @@ const rootReducer = (state = initState, action) => {
         ...state,
         todoList: [...state.todoList, action.payload],
       };
-
+    case "todoList/deleteToDo":
+      return {
+        ...state,
+        todoList: state.todoList.filter(
+          (item, index) => index !== action.payload
+        ),
+      };
     default: {
       return state;
     }
